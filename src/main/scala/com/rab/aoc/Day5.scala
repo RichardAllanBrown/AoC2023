@@ -6,7 +6,9 @@ object Day5 {
   case class Range(start: Long, end: Long) {
     assert(start <= end, "The end must be equal to or greater than the start")
     def intersectsWith(other: Range): Boolean = {
-      (start <= other.start && other.start <= end) || (start <= other.end && other.end <= end)
+      (start <= other.start && other.start <= end) ||
+        (start <= other.end && other.end <= end) ||
+        (other.start <= start && end <= other.end)
     }
     def totallyContains(other: Range): Boolean = {
       start <= other.start && other.end <= end
