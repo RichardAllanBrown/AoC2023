@@ -16,12 +16,12 @@ object Day5 {
     def +(value: Long): Range = Range(start+value, end+value)
   }
   object Range {
-    def ofOne(value: Long) = Range(value, value)
+    def ofOne(value: Long): Range = Range(value, value)
   }
 
   case class RangedAddition(range: Range, valueToAdd: Long) {
     // returns the modified input if possible and remaining, untouched ranges
-    def partitionAndApply(input: Range): (Option[Range], Seq[Range]) = {
+    def applyTo(input: Range): (Option[Range], Seq[Range]) = {
       if (range.totallyContains(input)) {
         // this range covers the entire input, no remainder
         (Some(input + valueToAdd), Seq.empty)
@@ -35,14 +35,13 @@ object Day5 {
         (Some(midChunk+valueToAdd), Seq(preChunk, postChunk).flatten)
       }
     }
-    def affectsRange(input: Range): Boolean = range.intersectsWith(input)
   }
 
   case class MultiRangeAddition(ranges: Seq[RangedAddition]) {
-    def applyToRange(input: Range): Seq[Range] = {
+    def applyTo(input: Range): Seq[Range] = {
       val subInputRanges = ranges.foldLeft((Seq[Range](), Seq(input)))((acc, r) => {
         val (processed, remaining) = acc
-        val result = remaining.map(r.partitionAndApply)
+        val result = remaining.map(r.applyTo)
         val newlyProcessed = result.flatMap(_._1)
         (processed ++ newlyProcessed, result.flatMap(_._2))
       })
@@ -50,7 +49,7 @@ object Day5 {
     }
   }
 
-  def parseRangeAdditionFromInput(s: String): RangedAddition = {
+  private def parseRangeAdditionFromInput(s: String): RangedAddition = {
     s.split(' ').map(_.toLong) match
       case Array(destStart, sourceStart, length) =>
         val addition = destStart - sourceStart
@@ -58,7 +57,7 @@ object Day5 {
       case _ => throw new RuntimeException(s"Cannot parse range line $s")
   }
 
-  def getAlmanacMap(lines: List[String])(header: String): MultiRangeAddition = {
+  private def getAlmanacMap(lines: List[String])(header: String): MultiRangeAddition = {
     val mapHeaderLineIndex = lines.indexOf(header)
     val mappingLines = lines.drop(mapHeaderLineIndex + 1).takeWhile(!_.isBlank)
     MultiRangeAddition(mappingLines.map(parseRangeAdditionFromInput))
@@ -79,7 +78,7 @@ object Day5 {
     )
 
     mapSeq.foldLeft(seeds)((s, m) => {
-      s.flatMap(m.applyToRange)
+      s.flatMap(m.applyTo)
     }).map(_.start).min
   }
 
@@ -99,7 +98,7 @@ object Day5 {
     )
 
     mapSeq.foldLeft(seeds)((s, m) => {
-      s.flatMap(m.applyToRange)
+      s.flatMap(m.applyTo)
     }).map(_.start).min
   }
 }
