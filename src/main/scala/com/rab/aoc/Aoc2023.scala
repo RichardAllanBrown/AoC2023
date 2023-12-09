@@ -9,7 +9,7 @@ private def getPuzzleInput(day: String): List[String] = {
   }.get
 }
 
-type Solver = List[String] => Long
+type Solver = List[String] => Any
 private val puzzleDict = Map[Int, (Option[Solver], Option[Solver])](
   1 -> (Some(Day1.solvePart1Puzzle), Some(Day1.solvePart2Puzzle)),
   2 -> (Some(Day2.solvePart1Puzzle), Some(Day2.solvePart2Puzzle)),

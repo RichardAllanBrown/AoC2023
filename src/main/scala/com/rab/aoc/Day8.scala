@@ -39,27 +39,27 @@ object Day8 {
     (directions, network)
   }
 
-  def countGhostSteps(d: Directions, network: Network): Int = {
-    // todo: improve efficiency, probably by computing the step count that puts you on a terminal
-    // space for each starting point and finding when they meet together
-    @tailrec
-    def helper(directions: LazyList[Char], visited: Seq[Seq[String]]): Seq[Seq[String]] = {
-      val currentPositions = visited.last
-      if currentPositions.forall(_.endsWith("Z")) then visited
-      else {
-        val newPositions = currentPositions.map(p => {
-          val (left, right) = network(p)
-          if directions.head == 'L' then left else right
-        })
-        helper(directions.tail, visited :+ newPositions)
-      }
-    }
-
-    helper(d, Seq(network.keys.filter(_.endsWith("A")).toSeq)).length - 1
+  def getEndPositions(directions: Seq[Char], network: Network)(start: String): LazyList[Int] = {
+    LazyList.iterate((0, start))(args => {
+      val (stepCount, currPos) = args
+      val currIndex = if stepCount == 0 then 0 else stepCount % directions.length
+      val (left, right) = network(currPos)
+      val nextPos = if directions(currIndex) == 'L' then left else right
+      (stepCount + 1, nextPos)
+    }).filter(s => s._2.endsWith("Z")).map(_._1)
   }
 
-  def solvePart2(lines: List[String]): Int = {
-    val (directions, network) = parseInput(lines)
-    countGhostSteps(directions, network)
+  def gcd(a: BigInt, b: BigInt): BigInt = if (b == 0) a.abs else gcd(b, a % b)
+  def lcm(list: Seq[BigInt]): BigInt = list.foldLeft(BigInt(1))((a, b) => (a / gcd(a, b)) * b)
+
+  def solvePart2(lines: List[String]): BigInt = {
+    val (_, network) = parseInput(lines)
+    val directions = lines.head.toCharArray.toSeq
+    val startingPositions = network.keys.filter(_.endsWith("A")).toSeq
+    println(s"There are ${startingPositions.length} starting positions")
+    val compEnds = getEndPositions(directions, network)
+    val repeatLengths = startingPositions.map(compEnds).map(i => BigInt(i(3)-i(2)))
+    println(s"The cycle lengths are $repeatLengths")
+    lcm(repeatLengths)
   }
 }
