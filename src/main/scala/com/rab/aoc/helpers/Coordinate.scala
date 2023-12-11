@@ -7,3 +7,9 @@ case class Coordinate(x: Int, y: Int) {
   lazy val left: Coordinate = copy(x = x - 1)
   lazy val right: Coordinate = copy(x = x + 1)
 }
+
+case class LongCoordinate(x: Long, y: Long) {
+  def manhattanDistance(other: LongCoordinate): Long = {
+    math.abs(x - other.x) + math.abs(y - other.y)
+  }
+}
