@@ -14,9 +14,10 @@ object Day11 {
     (values.min to values.max).filterNot(values.contains).toSet
   }
 
-  def expandUniverse(coordinates: Seq[LongCoordinate], factor: Int = 1): Seq[LongCoordinate] = {
+  def expandUniverse(coordinates: Seq[LongCoordinate], replaceWith: Int = 2): Seq[LongCoordinate] = {
     val emptyXs = getEmpty(coordinates)(_.x)
     val emptyYs = getEmpty(coordinates)(_.y)
+    val factor = replaceWith - 1
     coordinates.map {
       case LongCoordinate(x, y) => LongCoordinate(
         x + (emptyXs.count(_ < x) * factor),
@@ -39,7 +40,7 @@ object Day11 {
 
   def solvePart2(lines: List[String]): Long = {
     val coordinates = parseInput(lines)
-    val expandedCoords = expandUniverse(coordinates, factor = 1000000)
+    val expandedCoords = expandUniverse(coordinates, replaceWith = 1000000)
     computeDistances(expandedCoords)
   }
 }
