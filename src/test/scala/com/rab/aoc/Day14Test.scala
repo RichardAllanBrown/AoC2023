@@ -3,7 +3,7 @@ package com.rab.aoc
 import com.rab.aoc.Day14._
 
 class Day14Test extends UnitSpec {
-  val start = List(
+  private val start = List(
     "O....#....",
     "O.OO#....#",
     ".....##...",
@@ -16,7 +16,7 @@ class Day14Test extends UnitSpec {
     "#OO..#...."
   )
 
-  val expected = List(
+  private val expected = List(
     "OOOO.#.O..",
     "OO..#....#",
     "OO..O##..O",
@@ -37,7 +37,7 @@ class Day14Test extends UnitSpec {
     computeTopLoad(parse(expected)) shouldEqual 136
   }
 
-  val expectedPostCycle1 = List(
+  private val expectedPostCycle1 = List(
     ".....#....",
     "....#...O#",
     "...OO##...",
@@ -54,7 +54,7 @@ class Day14Test extends UnitSpec {
     cycle(parse(start)) shouldEqual parse(expectedPostCycle1)
   }
 
-  val expectedPostCycle3 = List(
+  private val expectedPostCycle3 = List(
     ".....#....",
     "....#...O#",
     ".....##...",

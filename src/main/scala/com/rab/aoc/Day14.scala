@@ -11,7 +11,7 @@ object Day14 {
 
   type Platform = Grid[Option[Stone]]
 
-  def printIt(p: Platform) = {
+  def printIt(p: Platform): Unit = {
     p.map {
       case None => "."
       case Some(Immovable) => "#"

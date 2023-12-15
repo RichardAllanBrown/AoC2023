@@ -3,7 +3,7 @@ package com.rab.aoc.helpers
 import com.rab.aoc.UnitSpec
 
 class GridTest extends UnitSpec {
-  val grid = Grid(4, 4, "ABCD1234EFGH5678".toCharArray)
+  private val grid = Grid(4, 4, "ABCD1234EFGH5678".toCharArray)
 
   test("Get will return expected value") {
     grid.get(Coordinate(0, 0)) shouldEqual 'A'
