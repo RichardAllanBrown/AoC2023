@@ -36,4 +36,42 @@ class Day14Test extends UnitSpec {
   test("Computes load correctly") {
     computeTopLoad(parse(expected)) shouldEqual 136
   }
+
+  val expectedPostCycle1 = List(
+    ".....#....",
+    "....#...O#",
+    "...OO##...",
+    ".OO#......",
+    ".....OOO#.",
+    ".O#...O#.#",
+    "....O#....",
+    "......OOOO",
+    "#...O###..",
+    "#..OO#...."
+  )
+
+  test("Will complete a cycle as expected") {
+    cycle(parse(start)) shouldEqual parse(expectedPostCycle1)
+  }
+
+  val expectedPostCycle3 = List(
+    ".....#....",
+    "....#...O#",
+    ".....##...",
+    "..O#......",
+    ".....OOO#.",
+    ".O#...O#.#",
+    "....O#...O",
+    ".......OOO",
+    "#...O###.O",
+    "#.OOO#...O"
+  )
+
+  test("Will compute right state after 3 cycles") {
+    cycleManyTimes(3, Map.empty)(parse(start)) shouldEqual parse(expectedPostCycle3)
+  }
+
+  test("After a billion cycles, computes right load") {
+    solvePart2(start) shouldEqual 64
+  }
 }

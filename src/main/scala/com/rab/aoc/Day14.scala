@@ -2,6 +2,8 @@ package com.rab.aoc
 
 import com.rab.aoc.helpers.{Coordinate, Grid}
 
+import scala.annotation.tailrec
+
 object Day14 {
   sealed trait Stone
   case object Immovable extends Stone
@@ -53,5 +55,38 @@ object Day14 {
   def solvePart1(lines: List[String]): Int = {
     import scala.util.chaining._
     lines.pipe(parse).pipe(tiltUp).pipe(computeTopLoad)
+  }
+
+  def cycle(p: Platform): Platform = {
+    (0 until 4).foldLeft(p)((p, _) => tiltUp(p).rotateClockwise)
+  }
+
+  @tailrec
+  private def findCycle(cache: Map[Platform, Platform], states: Seq[Platform]): Seq[Platform] = {
+    val nextState = cache(states.last)
+    if states.contains(nextState) then states
+    else findCycle(cache, states :+ nextState)
+  }
+
+  @tailrec
+  def cycleManyTimes(max: Int, cache: Map[Platform, Platform])(p: Platform): Platform = {
+    if max == 0 then p else {
+      cache.get(p) match {
+        case Some(c) =>
+          val cycle = findCycle(cache, Seq(p))
+          val additionalSteps = max % cycle.length
+          (0 until additionalSteps).foldLeft(p)((a, _) => cache(a))
+        case None =>
+          val newState = cycle(p)
+          cycleManyTimes(max - 1, cache.updated(p, newState))(newState)
+      }
+    }
+  }
+
+  def solvePart2(lines: List[String]): Int = {
+    import scala.util.chaining._
+    lines.pipe(parse)
+      .pipe(cycleManyTimes(1_000_000_000, Map.empty))
+      .pipe(computeTopLoad)
   }
 }

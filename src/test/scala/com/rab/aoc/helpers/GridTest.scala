@@ -52,9 +52,25 @@ class GridTest extends UnitSpec {
     val origGrid = Grid.fromInput(someBoolGrid).map(_ == '#')
     val truthyCoords =  origGrid.findPoints(identity).toSet
     val newGrid = Grid.fromCoordinates(truthyCoords)
+    newGrid shouldEqual origGrid
+  }
 
-    newGrid.width shouldEqual origGrid.width
-    newGrid.height shouldEqual origGrid.height
-    newGrid.values shouldEqual origGrid.values
+  test("Can rotate 1x1 grid") {
+    val smallGrid = Grid(1, 1, Seq(1))
+    smallGrid.rotateClockwise shouldEqual smallGrid
+  }
+
+  test("Can rotate 2x2 grid") {
+    val twoByGrid = Grid(2, 2, Seq(1, 2, 3, 4))
+    twoByGrid.rotateClockwise shouldEqual Grid(2, 2, Seq(3, 1, 4, 2))
+  }
+
+  test("Can rotate 2x3 grid") {
+    val twoByThree = Grid(2, 3, Seq(1, 2, 3, 4, 5, 6))
+    twoByThree.rotateClockwise shouldEqual Grid(3, 2, Seq(5, 3, 1, 6, 4, 2))
+  }
+
+  test("Rotating 4 times is the same grid") {
+    grid.rotateClockwise.rotateClockwise.rotateClockwise.rotateClockwise shouldEqual grid
   }
 }

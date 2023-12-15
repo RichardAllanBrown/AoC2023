@@ -40,8 +40,14 @@ case class Grid[T](width: Int, height: Int, values: Seq[T])(implicit gct: ClassT
     copy(values = values.updated(toIndex(c), v))
   }
 
+  def rotateClockwise: Grid[T] = {
+    val rows = values.sliding(width, width).toSeq
+    val newValues = (0 until width).reverse.flatMap(w => rows.map(_(w))).reverse
+    Grid(height, width, newValues)
+  }
+
   override def toString: String = {
-    values.toSeq.sliding(width, width).mkString("\n")
+    values.sliding(width, width).mkString("\n")
   }
 }
 
