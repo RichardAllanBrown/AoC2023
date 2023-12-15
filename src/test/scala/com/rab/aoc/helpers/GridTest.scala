@@ -28,4 +28,33 @@ class GridTest extends UnitSpec {
     val result = grid.getCardinalNeighbouringPoints(Coordinate(2, 2)).toSet
     result shouldEqual Set(Coordinate(2, 1), Coordinate(1, 2), Coordinate(2, 3), Coordinate(3, 2))
   }
+
+  test("Round trip with some coordinates") {
+    val someBoolGrid = List(
+      "##.#......#.##.",
+      "###........####",
+      "###..#..#..####",
+      ".###..##..###.#",
+      ".#.###..###...#",
+      ".....####.....#",
+      "#.###.##.###.##",
+      "#............#.",
+      "..###.##.###..#",
+      "##.#.#..#.#.###",
+      "...#..##..#....",
+      "##.#.####.#.##.",
+      "###.#.##.#.###.",
+      "....######.....",
+      "####......#####",
+      "####......#####",
+      "....######....."
+    )
+    val origGrid = Grid.fromInput(someBoolGrid).map(_ == '#')
+    val truthyCoords =  origGrid.findPoints(identity).toSet
+    val newGrid = Grid.fromCoordinates(truthyCoords)
+
+    newGrid.width shouldEqual origGrid.width
+    newGrid.height shouldEqual origGrid.height
+    newGrid.values shouldEqual origGrid.values
+  }
 }

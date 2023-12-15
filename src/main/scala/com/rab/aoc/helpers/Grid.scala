@@ -4,9 +4,8 @@ import scala.reflect.ClassTag
 
 case class Grid[T](width: Int, height: Int, values: Array[T])(implicit gct: ClassTag[T]) {
   assert(values.length == width*height, "The height and width does not match values given")
-  private def toIndex(c: Coordinate): Int = c.y * width + c.x
-
-  private def toCoord(i: Int): Coordinate = Coordinate(i % width, i / width)
+  private def toIndex = Grid.toIndex(width)
+  private def toCoord = Grid.toCoord(width)
 
   def get(c: Coordinate): T = values(toIndex(c))
 
@@ -27,6 +26,10 @@ case class Grid[T](width: Int, height: Int, values: Array[T])(implicit gct: Clas
   def findFirstPoint(f: T => Boolean): Option[Coordinate] = {
     val i = values.indexWhere(f)
     if i < 0 then None else Some(toCoord(i))
+  }
+
+  def findPoints(f: T => Boolean): Seq[Coordinate] = {
+    values.zipWithIndex.collect { case (v, i) if f(v) => i }.map(toCoord)
   }
 
   def map[A](f: T => A)(implicit ct: ClassTag[A]): Grid[A] = {
@@ -50,5 +53,13 @@ object Grid {
     val width = input.head.length
     val height = input.length
     Grid(width, height, input.mkString.toCharArray)
+  }
+  def toIndex(width: Int)(c: Coordinate): Int = c.y * width + c.x
+  def toCoord(width: Int)(i: Int): Coordinate = Coordinate(i % width, i / width)
+  def fromCoordinates(c: Set[Coordinate]): Grid[Boolean] = {
+    val width = c.map(_.x).max + 1
+    val height = c.map(_.y).max + 1
+    val values = (0 until height*width).map(i => c.contains(toCoord(width)(i))).toArray
+    Grid(width, height, values)
   }
 }
