@@ -2,7 +2,7 @@ package com.rab.aoc.helpers
 
 import scala.reflect.ClassTag
 
-case class Grid[T](width: Int, height: Int, values: Array[T])(implicit gct: ClassTag[T]) {
+case class Grid[T](width: Int, height: Int, values: Seq[T])(implicit gct: ClassTag[T]) {
   assert(values.length == width*height, "The height and width does not match values given")
   private def toIndex = Grid.toIndex(width)
   private def toCoord = Grid.toCoord(width)
