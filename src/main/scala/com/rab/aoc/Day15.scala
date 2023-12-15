@@ -10,7 +10,7 @@ object Day15 {
     s.toCharArray.foldLeft(0)(processChar)
   }
 
-  def solvePart1(input: List[String]) = {
+  def solvePart1(input: List[String]): Int = {
     input.flatMap(_.split(',')).map(computeHash).sum
   }
 }
