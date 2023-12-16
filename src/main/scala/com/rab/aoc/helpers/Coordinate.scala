@@ -6,6 +6,12 @@ case class Coordinate(x: Int, y: Int) {
   lazy val down: Coordinate = copy(y = y + 1)
   lazy val left: Coordinate = copy(x = x - 1)
   lazy val right: Coordinate = copy(x = x + 1)
+  def moveOne(direction: Direction): Coordinate = direction match {
+    case Up => up
+    case Down => down
+    case Left => left
+    case Right => right
+  }
 }
 
 object Coordinate {
