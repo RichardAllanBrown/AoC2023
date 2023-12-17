@@ -35,6 +35,10 @@ case class Grid[T](width: Int, height: Int, values: Seq[T])(implicit gct: ClassT
   def map[A](f: T => A)(implicit ct: ClassTag[A]): Grid[A] = {
     copy(values = values.map(f))
   }
+  
+  def mapi[A](f: (T, Coordinate) => A)(implicit ct: ClassTag[A]): Grid[A] = {
+    copy(values = values.zipWithIndex.map((a, i) => f(a, toCoord(i))))
+  }
 
   def setValue(c: Coordinate, v: T): Grid[T] = {
     copy(values = values.updated(toIndex(c), v))

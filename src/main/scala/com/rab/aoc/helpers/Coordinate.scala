@@ -12,6 +12,10 @@ case class Coordinate(x: Int, y: Int) {
     case Left => left
     case Right => right
   }
+
+  def manhattanDistance(other: Coordinate): Int = {
+    math.abs(x - other.x) + math.abs(y - other.y)
+  }
 }
 
 object Coordinate {
