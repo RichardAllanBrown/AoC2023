@@ -56,14 +56,9 @@ object Day17 {
       }
 
       dirs.flatMap(d => {
-        val move3 = (1 until 4).map(curr.moveN(_, d))
-        val move2 = (1 until 3).map(curr.moveN(_, d))
-        val move1 = Seq(curr.moveOne(d))
-
-        if allowedMove(move3) then Seq(path ++ move1, path ++ move2, path ++ move3)
-        else if allowedMove(move2) then Seq(path ++ move1, path ++ move2)
-        else if allowedMove(move1) then Seq(path ++ move1)
-        else Seq.empty
+        val allMove = (1 to maxLinearMove).map(curr.moveN(_, d))
+        val validMove = (minLinearMove to allMove.length).map(allMove.take).filter(allowedMove)
+        validMove.map(path ++ _)
       })
     }
 
