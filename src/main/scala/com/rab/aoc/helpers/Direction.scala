@@ -15,3 +15,7 @@ case object Left extends Direction {
 case object Right extends Direction {
   override val opposite: Direction = Left
 }
+
+sealed trait Orientation
+case object Horizontal extends Orientation
+case object Vertical extends Orientation

@@ -2,32 +2,43 @@ package com.rab.aoc
 
 import com.rab.aoc.helpers.*
 
-import scala.::
 import scala.annotation.tailrec
 import scala.collection.mutable
 
 object Day17 {
   private def parse(lines: List[String]) = Grid.fromInput(lines).map(_.asDigit)
 
-  def findCheapestPathBad(grid: Grid[Int]): Int = {
+  def findCheapestPath(minLinearMove: Int, maxLinearMove: Int)(grid: Grid[Int]): Int = {
     val start = Coordinate(0, 0)
     val target = Coordinate(grid.width - 1, grid.height - 1)
 
     def getPathCost(p: Seq[Coordinate]): Int = p.drop(1).map(grid.get).sum
 
     implicit object PathCostOrdering extends Ordering[Seq[Coordinate]] {
-      def getCost(a: Seq[Coordinate]): Int = {
+      def getPriority(a: Seq[Coordinate]): Int = {
         Int.MaxValue - getPathCost(a) - target.manhattanDistance(a.last)
       }
       override def compare(x: Seq[Coordinate], y: Seq[Coordinate]): Int = {
-        getCost(x).compare(getCost(y))
+        getPriority(x).compare(getPriority(y))
       }
     }
 
     val paths = mutable.PriorityQueue.empty(PathCostOrdering)
     paths.addOne(Seq(start))
-    val cheapestRoutesTo = mutable.Map.empty[Coordinate, Int]
-    cheapestRoutesTo.addOne(start -> 0)
+    val cheapestRoutesTo = mutable.Map.empty[(Coordinate, Orientation), Int]
+    cheapestRoutesTo.addOne((start, Horizontal) -> 0)
+    cheapestRoutesTo.addOne((start, Vertical) -> 0)
+
+    def getOrientation(path: Seq[Coordinate]): Orientation = {
+      val curr = path.last
+      val prev = path.lift(path.length - 2)
+      prev match
+        case Some(curr.left) => Horizontal
+        case Some(curr.right) => Horizontal
+        case Some(curr.up) => Vertical
+        case Some(curr.down) => Vertical
+        case _ => throw new RuntimeException("Developer fail!")
+    }
 
     def getPossibleNextPaths(path: Seq[Coordinate]): Seq[Seq[Coordinate]] = {
       val curr = path.last
@@ -64,14 +75,14 @@ object Day17 {
         if cheapestPath.last == target then ()
         else {
           val nextValidOptions = getPossibleNextPaths(cheapestPath)
-            .map(n => (n, getPathCost(n)))
-            .filter((path, cost) => {
-              cost < cheapestRoutesTo.get(path.last).map(_ + 5).getOrElse(Int.MaxValue)
+            .map(n => (n, getPathCost(n), getOrientation(n)))
+            .filter((path, cost, orientation) => {
+              cost < cheapestRoutesTo.getOrElse((path.last, orientation), Int.MaxValue)
             })
 
-          nextValidOptions.foreach { (path, cost) =>
-            if (cost < cheapestRoutesTo.getOrElse(path.last, Int.MaxValue)) {
-              cheapestRoutesTo.update(path.last, cost)
+          nextValidOptions.foreach { (path, cost, orientation) =>
+            if (cost < cheapestRoutesTo.getOrElse((path.last, orientation), Int.MaxValue)) {
+              cheapestRoutesTo.update((path.last, orientation), cost)
             }
             paths.addOne(path)
           }
@@ -82,11 +93,19 @@ object Day17 {
     }
 
     stepIt()
-    cheapestRoutesTo(target)
+    math.min(
+      cheapestRoutesTo.getOrElse((target, Vertical), Int.MaxValue),
+      cheapestRoutesTo.getOrElse((target, Horizontal), Int.MaxValue)
+    )
   }
 
   def solvePart1(lines: List[String]): Int = {
     val map = parse(lines)
-    findCheapestPathBad(map)
+    findCheapestPath(1, 3)(map)
+  }
+
+  def solvePart2(lines: List[String]): Int = {
+    val map = parse(lines)
+    findCheapestPath(4, 10)(map)
   }
 }
