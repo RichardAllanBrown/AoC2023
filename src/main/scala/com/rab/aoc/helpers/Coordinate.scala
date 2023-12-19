@@ -33,4 +33,11 @@ case class LongCoordinate(x: Long, y: Long) {
   def manhattanDistance(other: LongCoordinate): Long = {
     math.abs(x - other.x) + math.abs(y - other.y)
   }
+
+  def moveN(dist: Long, direction: Direction): LongCoordinate = direction match {
+    case Up => copy(y = y - dist)
+    case Down => copy(y = y + dist)
+    case Left => copy(x = x - dist)
+    case Right => copy(x = x + dist)
+  }
 }

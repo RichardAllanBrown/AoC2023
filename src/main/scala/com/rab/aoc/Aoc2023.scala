@@ -27,7 +27,8 @@ private val puzzleDict = Map[Int, (Option[Solver], Option[Solver])](
   14 -> (Some(Day14.solvePart1), Some(Day14.solvePart2)),
   15 -> (Some(Day15.solvePart1), None),
   16 -> (Some(Day16.solvePart1), Some(Day16.solvePart2)),
-  17 -> (Some(Day17.solvePart1), Some(Day17.solvePart2))
+  17 -> (Some(Day17.solvePart1), Some(Day17.solvePart2)),
+  18 -> (Some(Day18.solvePart1), Some(Day18.solvePart2))
 )
 
 @main def main(args: String*): Unit = {
