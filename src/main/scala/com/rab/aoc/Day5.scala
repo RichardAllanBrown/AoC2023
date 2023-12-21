@@ -2,25 +2,9 @@ package com.rab.aoc
 
 import scala.annotation.targetName
 
-object Day5 {
-  case class Range(start: Long, end: Long) {
-    assert(start <= end, "The end must be equal to or greater than the start")
-    def intersectsWith(other: Range): Boolean = {
-      (start <= other.start && other.start <= end) ||
-        (start <= other.end && other.end <= end) ||
-        (other.start <= start && end <= other.end)
-    }
-    def totallyContains(other: Range): Boolean = {
-      start <= other.start && other.end <= end
-    }
-    def length: Long = end - start
-    @targetName("add")
-    def +(value: Long): Range = Range(start+value, end+value)
-  }
-  object Range {
-    def ofOne(value: Long): Range = Range(value, value)
-  }
+import com.rab.aoc.helpers.Range
 
+object Day5 {
   case class RangedAddition(range: Range, valueToAdd: Long) {
     // returns the modified input if possible and remaining, untouched ranges
     def applyTo(input: Range): (Option[Range], Seq[Range]) = {
