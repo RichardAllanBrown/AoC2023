@@ -79,15 +79,16 @@ object Day19 {
   }
 
   case class RangedPart(x: Range, m: Range, a: Range, s: Range) {
-    lazy val totalRating: Long = x.sum * m.sum * a.sum * s.sum
+    lazy val totalRating: Long = x.length * m.length * a.length * s.length
   }
   
   // The left is the part that didn't match and the right is right
   def splitRange(comparator: Char, prop: Char, splitAt: Long)(part: RangedPart): (Option[RangedPart], Option[RangedPart]) = {
     def helper(s: RangedPart => Range, builder: Range => RangedPart) = {
-      val (r1, r2) = if comparator == '<' then s(part).splitRangeLessThan(splitAt) else s(part).splitRangeMoreThan(splitAt)
-      val result = (r1.map(builder), r2.map(builder))
-      if comparator == '<' then result.swap else result
+      val (r1, r2) = if comparator == '<'
+        then s(part).splitRangeLessThan(splitAt).swap
+        else s(part).splitRangeMoreThan(splitAt)
+      (r1.map(builder), r2.map(builder))
     }
     prop match {
       case 'x' => helper(_.x, r => part.copy(x = r))
@@ -101,7 +102,7 @@ object Day19 {
   // First is the part matched by the rule, second is the part not matched by rule
   def processRule(rules: Map[String, Rule])(ruleKey: String, part: RangedPart): Seq[RangedPart] = {
     case class State(unmatched: Option[RangedPart], matched: Map[Outcome, Seq[RangedPart]]) {
-      def withMatchedRange(outcome: Outcome, rangedPart: RangedPart) = {
+      def withMatchedRange(outcome: Outcome, rangedPart: RangedPart): State = {
         val newValue = matched.getOrElse(outcome, Seq.empty) :+ rangedPart
         copy(matched = matched.updated(outcome, newValue))
       }

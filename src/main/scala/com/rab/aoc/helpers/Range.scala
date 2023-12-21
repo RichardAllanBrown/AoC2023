@@ -15,7 +15,7 @@ case class Range(start: Long, end: Long) {
     start <= other.start && other.end <= end
   }
 
-  def length: Long = end - start
+  def length: Long = end - start + 1
 
   @targetName("add")
   def +(value: Long): Range = Range(start + value, end + value)
@@ -31,8 +31,6 @@ case class Range(start: Long, end: Long) {
     else if n < start then (None, Some(this))
     else (Some(this), None)
   }
-  
-  def sum: Long = (end - start+ 1) * (start + end) / 2
 }
 
 object Range {

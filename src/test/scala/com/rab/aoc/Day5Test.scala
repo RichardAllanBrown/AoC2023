@@ -1,6 +1,7 @@
 package com.rab.aoc
 
 import com.rab.aoc.Day5._
+import com.rab.aoc.helpers.Range
 
 class Day5Test extends UnitSpec {
   test("Ranged addition with ranges wholly inside") {
@@ -25,10 +26,5 @@ class Day5Test extends UnitSpec {
     val (newVal, remaining) = RangedAddition(Range(5, 10), 3).applyTo(Range(1, 15))
     newVal shouldEqual Some(Range(8, 13))
     remaining shouldEqual Seq(Range(1, 4), Range(11, 15))
-  }
-
-  test("Intersection is true for overlapping ranges") {
-    Range(5, 10).intersectsWith(Range(1, 15)) shouldBe true
-    Range(1, 15).intersectsWith(Range(5, 10)) shouldBe true
   }
 }
