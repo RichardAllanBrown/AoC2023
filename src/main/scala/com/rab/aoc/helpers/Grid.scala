@@ -72,4 +72,9 @@ object Grid {
     val values = (0 until height*width).map(i => c.contains(toCoord(width)(i))).toArray
     Grid(width, height, values)
   }
+  def print[T](grid: Grid[T], f: T => String): Unit = {
+    grid.values.sliding(grid.width, grid.width).foreach { l =>
+      println(l.map(f).mkString)
+    }
+  }
 }
