@@ -78,4 +78,36 @@ object Day22 {
     val freeBricks = findSafelyDisintegratable(settledBricks)
     freeBricks.length
   }
+
+  def countBricksThatMove(bricks: Seq[Brick]): Int = {
+    val maxX = bricks.map(_.maxX).max
+    val maxY = bricks.map(_.maxY).max
+    val ground = Brick(Vec3(0, 0, 0), Vec3(maxX, maxY, 0))
+
+    val byMaxZ = (bricks :+ ground).groupBy(_.maxZ)
+    val brickAndWhatItSitsOn = bricks.map(b => {
+      b -> byMaxZ.getOrElse(b.minZ - 1, Seq.empty).filter(_.interceptsXY(b))
+    }).toMap
+    val byMinZ = bricks.groupBy(_.minZ)
+    val brickAndWhatSitsOnIt = bricks.map(b => {
+      b -> byMinZ.getOrElse(b.maxZ + 1, Seq.empty).filter(_.interceptsXY(b))
+    }).toMap
+
+    def canFindGround(b: Brick, pile: Map[Brick, Seq[Brick]]): Boolean = {
+      if pile.contains(b)
+      then pile(b).exists(bb => bb == ground || canFindGround(bb, pile))
+      else false
+    }
+
+    bricks.map { bToRemove =>
+      val newBrickStack = brickAndWhatItSitsOn.removed(bToRemove)
+      bricks.filterNot(_ == bToRemove).filterNot(canFindGround(_, newBrickStack)).length
+    }.sum
+  }
+
+  def solvePart2(lines: List[String]): Int = {
+    val bricks = parseInput(lines)
+    val settledBricks = settle(bricks)
+    countBricksThatMove(settledBricks)
+  }
 }
