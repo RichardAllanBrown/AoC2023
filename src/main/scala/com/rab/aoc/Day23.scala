@@ -11,6 +11,7 @@ object Day23 {
     Left -> '<',
     Right -> '>'
   )
+  private val allArrows = arrows.values.toSeq
   private val wall = '#'
 
   type SegmentAndLength = ((Coordinate, Coordinate), Int)
@@ -32,11 +33,13 @@ object Day23 {
 
     @tailrec
     def walkToSplit(currentPath: Seq[Coordinate], prevDir: Direction): SegmentAndLength = {
-      val currentLoc = currentPath.last
-      val possibleMoves = getNextDirs(grid, Some(prevDir), currentLoc)
-      if currentLoc == target || 1 < possibleMoves.length
+      val currentLoc = currentPath.last      
+      val atJunction = 1 < grid.getCardinalNeighbouringPoints(currentLoc)
+        .map(grid.get).count(arrows.values.toSeq.contains)
+      if currentLoc == target || atJunction
       then (currentPath.head, currentPath.last) -> (currentPath.length - 1)
       else {
+        val possibleMoves = getNextDirs(grid, Some(prevDir), currentLoc)
         val (d, c) = possibleMoves.head
         walkToSplit(currentPath :+ c, d)
       }
@@ -77,24 +80,21 @@ object Day23 {
     distances.max
   }
 
-  def findAllPathsEitherWay(start: Coordinate, target: Coordinate, originalMap: Map[Coordinate, Seq[Coordinate]]): Seq[Seq[Coordinate]] = {
-    def helper(currPath: Seq[Coordinate], map: Map[Coordinate, Seq[Coordinate]]): Seq[Seq[Coordinate]] = {
+  def findAllPathsEitherWay(start: Coordinate, target: Coordinate, map: Map[Coordinate, Seq[Coordinate]]): Seq[Seq[Coordinate]] = {
+    def helper(currPath: Seq[Coordinate]): Seq[Seq[Coordinate]] = {
       if currPath.last == target then Seq(currPath)
       else {
-        val nextNodes = map.getOrElse(currPath.last, Seq.empty)
+        val nextNodes = map(currPath.last).filterNot(currPath.contains)
         if nextNodes.isEmpty then Seq.empty // no possible path to end
         else {
           nextNodes.foldLeft(Seq.empty)((acc, n) => {
-            val limitedMap = map
-              .updated(currPath.last, nextNodes.filterNot(_ == n))
-              .updated(n, map(n).filterNot(_ == currPath.last))
-            acc ++ helper(currPath :+ n, limitedMap)
+            acc ++ helper(currPath :+ n)
           })
         }
       }
     }
 
-    helper(Seq(start), originalMap)
+    helper(Seq(start))
   }
 
   def solvePart2(lines: List[String]): Int = {
