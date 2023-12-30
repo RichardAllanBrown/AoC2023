@@ -3,7 +3,7 @@ package com.rab.aoc
 import com.rab.aoc.Day13._
 
 class Day13Test extends UnitSpec {
-  val exampleLines = List(
+  private val exampleLines = List(
     "#.##..##.",
     "..#.##.#.",
     "##......#",
@@ -29,13 +29,13 @@ class Day13Test extends UnitSpec {
   private val secondGrid = parse(exampleLines.drop(8))
 
   test("Can handle first example correctly") {
-    findVerticalReflection(firstGrid) shouldEqual Some(5)
-    findHorizontalReflection(firstGrid) shouldEqual None
+    findVerticalReflection(firstGrid, allowForSmudge = false) shouldEqual Some(5)
+    findHorizontalReflection(firstGrid, allowForSmudge = false) shouldEqual None
   }
 
   test("Can handle second example correctly") {
-    findHorizontalReflection(secondGrid) shouldEqual Some(4)
-    findVerticalReflection(secondGrid) shouldEqual None
+    findHorizontalReflection(secondGrid, allowForSmudge = false) shouldEqual Some(4)
+    findVerticalReflection(secondGrid, allowForSmudge = false) shouldEqual None
   }
 
   test("Computes score") {
@@ -62,8 +62,8 @@ class Day13Test extends UnitSpec {
       "####......#####",
       "....######....."
     ))
-    findHorizontalReflection(number97) shouldEqual Some(15)
-    findVerticalReflection(number97) shouldEqual None
+    findHorizontalReflection(number97, allowForSmudge = false) shouldEqual Some(15)
+    findVerticalReflection(number97, allowForSmudge = false) shouldEqual None
   }
 
   test("No reflections should be here") {
@@ -71,8 +71,8 @@ class Day13Test extends UnitSpec {
       ".#",
       "##"
     ))
-    findVerticalReflection(grid) shouldEqual None
-    findHorizontalReflection(grid) shouldEqual None
+    findVerticalReflection(grid, allowForSmudge = false) shouldEqual None
+    findHorizontalReflection(grid, allowForSmudge = false) shouldEqual None
   }
 
   test("No reflections should be here either") {
@@ -81,8 +81,8 @@ class Day13Test extends UnitSpec {
       "..#",
       ".##"
     ))
-    findVerticalReflection(grid) shouldEqual None
-    findHorizontalReflection(grid) shouldEqual None
+    findVerticalReflection(grid, allowForSmudge = false) shouldEqual None
+    findHorizontalReflection(grid, allowForSmudge = false) shouldEqual None
   }
 
   test("2 reflection here") {
@@ -90,8 +90,8 @@ class Day13Test extends UnitSpec {
       "##",
       "##"
     ))
-    findVerticalReflection(grid) shouldEqual Some(1)
-    findHorizontalReflection(grid) shouldEqual Some(1)
+    findVerticalReflection(grid, allowForSmudge = false) shouldEqual Some(1)
+    findHorizontalReflection(grid, allowForSmudge = false) shouldEqual Some(1)
   }
 
   test("More complex and fuller example is solved for part 1") {
@@ -136,5 +136,6 @@ class Day13Test extends UnitSpec {
                  |#.#.##.#.""".stripMargin.linesIterator.toList
 
     solvePart1(lines) shouldEqual 709
+    solvePart2(lines) shouldEqual 1400
   }
 }
