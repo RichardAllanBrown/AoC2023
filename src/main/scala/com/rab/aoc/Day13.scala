@@ -4,43 +4,46 @@ import com.rab.aoc.helpers.{Coordinate, Grid}
 
 object Day13 {
   def findVerticalReflection(rocks: Grid[Boolean]): Option[Int] = {
-    def hasReflectionAt(v: Int): Boolean = {
-      val (left, right) = rocks.findPoints(identity).partition(_.x < v)
-      val range = math.min(rocks.width - v, v)
-      val relevantLeft = left.filter(v - range <= _.x)
-      val relevantRight = right.filter(_.x <= v + range)
-      val mirroredLeftSet = relevantLeft.map(c => c.copy(x = v*2 - c.x - 1)).toSet
-      val rightSet = relevantRight.toSet
+    val rockCoords = rocks.findPoints(identity)
 
-      mirroredLeftSet == rightSet
+    def hasReflectionAt(v: Int): Boolean = {
+      LazyList.iterate((v - 1, v))(a => (a._1 - 1, a._2 + 1))
+        .takeWhile(a => 0 <= a._1 && a._2 < rocks.width)
+        .forall(p => {
+          val (lCol, rCol) = p
+          val leftColRocks = rockCoords.filter(_.x == lCol).map(_.y).toSet
+          val rightColRocks = rockCoords.filter(_.x == rCol).map(_.y).toSet
+          leftColRocks == rightColRocks
+        })
     }
+
     (1 until rocks.width).find(hasReflectionAt)
   }
 
   def findHorizontalReflection(rocks: Grid[Boolean]): Option[Int] = {
-    def hasReflectionAt(h: Int): Boolean = {
-      val (top, bottom) = rocks.findPoints(identity).partition(_.y < h)
-      val range = math.min(rocks.height - h, h)
-      val relevantTop = top.filter(h - range <= _.y)
-      val relevantBottom = bottom.filter(_.y <= h + range)
-      val mirroredTopSet = relevantTop.map(c => c.copy(y = h*2 - c.y - 1)).toSet
-      val bottomSet = relevantBottom.toSet
+    val rockCoords = rocks.findPoints(identity)
 
-      mirroredTopSet == bottomSet
+    def hasReflectionAt(v: Int): Boolean = {
+      LazyList.iterate((v - 1, v))(a => (a._1 - 1, a._2 + 1))
+        .takeWhile(a => 0 <= a._1 && a._2 < rocks.height)
+        .forall(p => {
+          val (tRow, bRow) = p
+          val leftColRocks = rockCoords.filter(_.y == tRow).map(_.x).toSet
+          val rightColRocks = rockCoords.filter(_.y == bRow).map(_.x).toSet
+          leftColRocks == rightColRocks
+        })
     }
+
     (1 until rocks.height).find(hasReflectionAt)
   }
 
   def getReflectionValue(rocks: Grid[Boolean]): Int = {
-    findVerticalReflection(rocks)
-      .orElse(findHorizontalReflection(rocks).map(_*100))
-      .get
+    findVerticalReflection(rocks).getOrElse(0) +
+      findHorizontalReflection(rocks).map(_*100).getOrElse(0)
   }
 
-  private def printIt(rocks: Grid[Boolean]) = {
-    rocks.values.sliding(rocks.width, rocks.width).foreach { r =>
-      println(r.map(if _ then '#' else '.').mkString)
-    }
+  private def printIt(rocks: Grid[Boolean]): Unit = {
+    Grid.print(rocks, if _ then "#" else ".")
   }
 
   def parse(l: List[String]): Grid[Boolean] = Grid.fromInput(l).map(_ == '#')
@@ -52,6 +55,8 @@ object Day13 {
   }
 
   def solvePart1(lines: List[String]): Int = {
-    parseMany(lines).map(getReflectionValue).sum
+    val grids = parseMany(lines)
+    println(s"Found ${grids.length} grids in input")
+    grids.map(getReflectionValue).sum
   }
 }

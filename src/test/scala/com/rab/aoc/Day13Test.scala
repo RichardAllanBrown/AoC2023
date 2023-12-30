@@ -25,12 +25,17 @@ class Day13Test extends UnitSpec {
     parseMany(exampleLines).length shouldEqual 2
   }
 
-  test("Can compute vertical reflection") {
-    findVerticalReflection(parse(exampleLines.take(7))) shouldEqual Seq(5)
+  private val firstGrid = parse(exampleLines.take(7))
+  private val secondGrid = parse(exampleLines.drop(8))
+
+  test("Can handle first example correctly") {
+    findVerticalReflection(firstGrid) shouldEqual Some(5)
+    findHorizontalReflection(firstGrid) shouldEqual None
   }
 
-  test("Can compute horizontal reflection") {
-    findHorizontalReflection(parse(exampleLines.drop(8))) shouldEqual Seq(4)
+  test("Can handle second example correctly") {
+    findHorizontalReflection(secondGrid) shouldEqual Some(4)
+    findVerticalReflection(secondGrid) shouldEqual None
   }
 
   test("Computes score") {
@@ -57,8 +62,8 @@ class Day13Test extends UnitSpec {
       "####......#####",
       "....######....."
     ))
-    findHorizontalReflection(number97) shouldEqual Seq(15)
-    findVerticalReflection(number97) shouldEqual Seq.empty
+    findHorizontalReflection(number97) shouldEqual Some(15)
+    findVerticalReflection(number97) shouldEqual None
   }
 
   test("No reflections should be here") {
@@ -66,8 +71,8 @@ class Day13Test extends UnitSpec {
       ".#",
       "##"
     ))
-    findVerticalReflection(grid) shouldEqual Seq.empty
-    findHorizontalReflection(grid) shouldEqual Seq.empty
+    findVerticalReflection(grid) shouldEqual None
+    findHorizontalReflection(grid) shouldEqual None
   }
 
   test("No reflections should be here either") {
@@ -76,8 +81,8 @@ class Day13Test extends UnitSpec {
       "..#",
       ".##"
     ))
-    findVerticalReflection(grid) shouldEqual Seq.empty
-    findHorizontalReflection(grid) shouldEqual Seq.empty
+    findVerticalReflection(grid) shouldEqual None
+    findHorizontalReflection(grid) shouldEqual None
   }
 
   test("2 reflection here") {
@@ -85,7 +90,51 @@ class Day13Test extends UnitSpec {
       "##",
       "##"
     ))
-    findVerticalReflection(grid) shouldEqual Seq(1)
-    findHorizontalReflection(grid) shouldEqual Seq(1)
+    findVerticalReflection(grid) shouldEqual Some(1)
+    findHorizontalReflection(grid) shouldEqual Some(1)
+  }
+
+  test("More complex and fuller example is solved for part 1") {
+    val lines = """#.##..##.
+                 |..#.##.#.
+                 |##......#
+                 |##......#
+                 |..#.##.#.
+                 |..##..##.
+                 |#.#.##.#.
+                 |
+                 |#...##..#
+                 |#....#..#
+                 |..##..###
+                 |#####.##.
+                 |#####.##.
+                 |..##..###
+                 |#....#..#
+                 |
+                 |.#.##.#.#
+                 |.##..##..
+                 |.#.##.#..
+                 |#......##
+                 |#......##
+                 |.#.##.#..
+                 |.##..##.#
+                 |
+                 |#..#....#
+                 |###..##..
+                 |.##.#####
+                 |.##.#####
+                 |###..##..
+                 |#..#....#
+                 |#..##...#
+                 |
+                 |#.##..##.
+                 |..#.##.#.
+                 |##..#...#
+                 |##...#..#
+                 |..#.##.#.
+                 |..##..##.
+                 |#.#.##.#.""".stripMargin.linesIterator.toList
+
+    solvePart1(lines) shouldEqual 709
   }
 }
