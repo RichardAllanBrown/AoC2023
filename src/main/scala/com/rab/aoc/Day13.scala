@@ -1,6 +1,6 @@
 package com.rab.aoc
 
-import com.rab.aoc.helpers.{Coordinate, Grid}
+import com.rab.aoc.helpers.Grid
 
 object Day13 {
   def findVerticalReflection(rocks: Grid[Boolean]): Option[Int] = {
@@ -21,23 +21,11 @@ object Day13 {
   }
 
   def findHorizontalReflection(rocks: Grid[Boolean]): Option[Int] = {
-    val rockCoords = rocks.findPoints(identity)
-
-    def hasReflectionAt(v: Int): Boolean = {
-      LazyList.iterate((v - 1, v))(a => (a._1 - 1, a._2 + 1))
-        .takeWhile(a => 0 <= a._1 && a._2 < rocks.height)
-        .forall(p => {
-          val (tRow, bRow) = p
-          val leftColRocks = rockCoords.filter(_.y == tRow).map(_.x).toSet
-          val rightColRocks = rockCoords.filter(_.y == bRow).map(_.x).toSet
-          leftColRocks == rightColRocks
-        })
-    }
-
-    (1 until rocks.height).find(hasReflectionAt)
+    val rotated = rocks.rotateClockwise
+    findVerticalReflection(rotated).map(rotated.width - _)
   }
 
-  def getReflectionValue(rocks: Grid[Boolean]): Int = {
+  private def getReflectionValue(rocks: Grid[Boolean]): Int = {
     findVerticalReflection(rocks).getOrElse(0) +
       findHorizontalReflection(rocks).map(_*100).getOrElse(0)
   }
